@@ -34,7 +34,7 @@ contributors: Jack Works
         1. Let _job_ be a new Job Abstract Closure with no parameters that captures _promiseCapability_, and then and performs the following steps when called:
           1. Return Call(_promiseCapability_.[[Reject]], *undefined*, «»).
         1. IfAbruptRejectPromise(HostEnqueuePromiseJob(_job_.[[Job]], _job_.[[Realm]], _afterTime_), _promise_).
-        1. IfAbruptRejectPromise(Invoke(_wrapPromise_, *"then"*, «_promise_.[[Resolve]], _promise_.[[Reject]]»)).
+        1. IfAbruptRejectPromise(Invoke(_wrapPromise_, *"then"*, «_promise_.[[Resolve]], _promise_.[[Reject]]»), _promise_).
         1. Return _promise_.
       </emu-alg>
     </emu-clause>
