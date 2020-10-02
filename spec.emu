@@ -58,7 +58,7 @@ contributors: Jack Works
       <li><ins>If _afterTime_ presents, _job_ must not be executed before the time that _afterTime_ describes.</ins></li>
     </ul>
     <emu-note>
-      <ins>The interpretation of _afterTime_ (for example, if it receives an ) is depended on the host. If the _afterTime_ is an invalid value, host can return a AbruptCompletion record.</ins>
+      <ins>The interpretation of _afterTime_ is depending on the host. Host can return AbortCompletion if the environment does not allow clock-dependent behaviors or _afterTime_ is invalid value.</ins>
     </emu-note>
   </emu-clause>
 </emu-clause>
