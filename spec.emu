@@ -4,20 +4,61 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <script src="./spec.js"></script>
 <pre class="metadata">
-title: Proposal Title Goes Here
-stage: -1
-contributors: Your Name(s) Here
+title: Promise.delay and Promise.timeout
+stage: 0
+contributors: Jack Works
 </pre>
 
-<emu-clause id="sec-demo-clause">
-  <h1>This is an emu-clause</h1>
-  <p>This is an algorithm:</p>
-  <emu-alg>
-    1. Let _proposal_ be *undefined*.
-    1. If IsAccepted(_proposal_),
-      1. Let _stage_ be *0*.
-    1. Else,
-      1. Let _stage_ be *-1*.
-    1. Return ? ToString(_proposal_).
-  </emu-alg>
+<emu-clause id="sec-promise-objects">
+  <h1>Promise Objects</h1>
+  <emu-clause id="sec-properties-of-the-promise-constructor">
+    <h1>Properties of the Promise Constructor</h1>
+    <emu-clause id="sec-promise.delay">
+      <h1>Promise.delay ( _afterTime_ )</h1>
+      <emu-alg>
+        1. Let _C_ be the *this* value.
+        1. Let _promiseCapability_ be ? NewPromiseCapability(C).
+        1. Let _promise_ be _promiseCapability_.[[Promise]].
+        1. Let _job_ be a new Job Abstract Closure with no parameters that captures _promiseCapability_, and then and performs the following steps when called:
+          1. Return Call(_promiseCapability_.[[Resolve]], *undefined*, «»).
+        1. IfAbruptRejectPromise(HostEnqueuePromiseJob(_job_.[[Job]], _job_.[[Realm]], _afterTime_), _promise_).
+        1. Return _promise_.
+      </emu-alg>
+    </emu-clause>
+    <emu-clause id="sec-promise.timeout">
+      <h1>Promise.timeout ( _wrapPromise_, _afterTime_ )</h1>
+      <emu-alg>
+        1. Let _C_ be the *this* value.
+        1. Let _promiseCapability_ be ? NewPromiseCapability(C).
+        1. Let _promise_ be _promiseCapability_.[[Promise]].
+        1. Let _job_ be a new Job Abstract Closure with no parameters that captures _promiseCapability_, and then and performs the following steps when called:
+          1. Return Call(_promiseCapability_.[[Reject]], *undefined*, «»).
+        1. IfAbruptRejectPromise(HostEnqueuePromiseJob(_job_.[[Job]], _job_.[[Realm]], _afterTime_), _promise_).
+        1. IfAbruptRejectPromise(Invoke(_wrapPromise_, *"then"*, «_promise_.[[Resolve]], _promise_.[[Reject]]»)).
+        1. Return _promise_.
+      </emu-alg>
+    </emu-clause>
+  </emu-clause>
+</emu-clause>
+
+
+<emu-clause id="sec-jobs" oldids="sec-jobs-and-job-queues,sec-enqueuejob,sec-runjobs,job-queue">
+    <h1>Jobs and Host Operations to Enqueue Jobs</h1>
+
+  <emu-clause id="sec-hostenqueuepromisejob" aoid="HostEnqueuePromiseJob">
+    <h1>HostEnqueuePromiseJob ( _job_, _realm_, <ins>[_afterTime_]</ins> )</h1>
+    <p>HostEnqueuePromiseJob is a host-defined abstract operation that schedules the Job Abstract Closure _job_ to be performed, at some future time<ins>, with optional minimal future time requirement _afterTime_.</ins> The Abstract Closures used with this algorithm are intended to be related to the handling of Promises, or otherwise, to be scheduled with equal priority to Promise handling operations.</p>
+    <p>The _realm_ parameter is either *null* or a Realm Record.</p>
+
+    <p>The implementation of HostEnqueuePromiseJob must conform to the requirements in Jobs as well as the following:</p>
+    <ul>
+      <li>If _realm_ is not *null*, each time _job_ is invoked the implementation must perform implementation-defined steps such that execution is prepared to evaluate ECMAScript code at the time of _job_'s invocation.</li>
+      <li>Let _scriptOrModule_ be GetActiveScriptOrModule() at the time HostEnqueuePromiseJob is invoked. If _realm_ is not *null*, each time _job_ is invoked the implementation must perform implementation-defined steps such that _scriptOrModule_ is the active script or module at the time of _job_'s invocation.</li>
+      <li>Jobs must run in the same order as the HostEnqueuePromiseJob invocations that scheduled them.</li>
+      <li><ins>If _afterTime_ presents, _job_ must not be executed before the time that _afterTime_ describes.</ins></li>
+    </ul>
+    <emu-note>
+      <ins>The interpretation of _afterTime_ (for example, if it receives an ) is depended on the host. If the _afterTime_ is an invalid value, host can return a AbruptCompletion record.</ins>
+    </emu-note>
+  </emu-clause>
 </emu-clause>
