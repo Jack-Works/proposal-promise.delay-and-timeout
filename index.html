@@ -1879,7 +1879,7 @@ li.menu-search-result-term:before {
       <li><ins>If <var>afterTime</var> presents, <var>job</var> must not be executed before the time that <var>afterTime</var> describes.</ins></li>
     </ul>
     <emu-note><span class="note">Note</span><div class="note-contents">
-      <ins>The interpretation of <var>afterTime</var> (for example, if it receives an ) is depended on the host. If the <var>afterTime</var> is an invalid value, host can return a AbruptCompletion record.</ins>
+      <ins>The interpretation of <var>afterTime</var> is depending on the host. Host can return AbortCompletion if the environment does not allow clock-dependent behaviors or <var>afterTime</var> is invalid value.</ins>
     </div></emu-note>
   </emu-clause>
 </emu-clause><emu-annex id="sec-copyright-and-software-license">
